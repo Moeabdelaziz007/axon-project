@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import AgentCard from '@/components/AgentCard'
-import NeuralBackground from '@/components/NeuralBackground'
+import AgentCard from '@/components/agents/AgentCard'
+import NeuralBackground from '@/components/ui/NeuralBackground'
 
 export const dynamic = 'force-dynamic' // Force dynamic rendering
 

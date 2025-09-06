@@ -1,78 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import NeuralBackground from '@/components/NeuralBackground';
-import { useAgentExecutor } from '@/hooks/useAgentExecutor';
-
-interface Artifact {
-  id: string;
-  runId: string;
-  agentType: string;
-  output: string;
-  provider: string;
-  metadata: any;
-  createdAt: string;
-}
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CodeAgentPage() {
-  const [prompt, setPrompt] = useState('');
-  const [language, setLanguage] = useState('TypeScript/JavaScript');
-  const [framework, setFramework] = useState('React/Next.js');
-  const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
-  const [artifacts, setArtifacts] = useState<Artifact[]>([]);
-
-  const { executeAgent, isExecuting, result, error, clearResult } = useAgentExecutor();
+  const router = useRouter();
 
   useEffect(() => {
-    loadArtifacts();
-  }, []);
-
-  const loadArtifacts = async () => {
-    try {
-      const response = await fetch('/api/artifacts/list');
-      const data = await response.json();
-      if (data.success) {
-        setArtifacts(data.artifacts.filter((a: Artifact) => a.agentType === 'code'));
-      }
-    } catch (error) {
-      console.error('Failed to load artifacts:', error);
-    }
-  };
-
-  const runAgent = async () => {
-    if (!prompt.trim()) return;
-
-    try {
-      clearResult();
-      const data = await executeAgent('code', {
-        prompt,
-        language,
-        framework,
-        complexity
-      });
-      
-      // Save artifact
-      await fetch('/api/artifacts/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          runId: `code-${Date.now()}`,
-          agentType: 'code',
-          output: data.result?.output || data.output,
-          provider: data.result?.provider || data.provider,
-          language: data.result?.language || language,
-          framework: data.result?.framework || framework,
-          complexity: data.result?.complexity || complexity,
-          prompt: prompt
-        })
-      });
-
-      // Reload artifacts
-      loadArtifacts();
-    } catch (error) {
-      console.error('Agent execution failed:', error);
-    }
-  };
+    // Redirect to unified agent page
+    router.replace('/agents/code');
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-carbon-900 via-spaceGray-900 to-carbon-800 text-axonWhite">
