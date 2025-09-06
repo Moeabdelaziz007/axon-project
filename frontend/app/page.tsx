@@ -14,31 +14,31 @@ export default function HomePage() {
   }, [router])
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 flex items-center justify-center">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-sky-50 to-teal-50 dark:from-indigo-900 dark:via-indigo-800 dark:to-blue-900">
       <div className="max-w-4xl mx-auto text-center px-6">
         <div className="mb-8">
-          <h1 className="text-6xl font-bold text-white mb-4">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-600 dark:from-blue-400 dark:to-teal-400">
               Axon
             </span>
           </h1>
-          <p className="text-xl text-blue-200 font-light">المحور العصبي لمشروعك</p>
-          <p className="text-lg text-blue-300 mt-2">The Nerve Center for Your Project</p>
+          <p className="text-xl text-slate-600 dark:text-blue-200 font-light">المحور العصبي لمشروعك</p>
+          <p className="text-lg text-slate-700 dark:text-blue-300 mt-2">The Nerve Center for Your Project</p>
         </div>
 
         <div className="mb-8">
-          <div aria-hidden="true" className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-4"></div>
-          <p className="text-blue-200 text-lg">جاري التحميل...</p>
-          <p className="text-blue-300 text-sm mt-2">سيتم توجيهك إلى لوحة التحكم خلال ثانيتين</p>
+          <div aria-hidden="true" className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 dark:border-blue-400 mx-auto mb-4"></div>
+          <p className="text-slate-700 dark:text-blue-200 text-lg">جاري التحميل...</p>
+          <p className="text-slate-600 dark:text-blue-300 text-sm mt-2">سيتم توجيهك إلى لوحة التحكم خلال ثانيتين</p>
         </div>
 
-        <div className="text-blue-300 text-sm">
+        <div className="text-slate-600 dark:text-blue-300 text-sm">
           <p>✅ Supabase متصل</p>
           <p>✅ قاعدة البيانات جاهزة</p>
           <p>✅ Next.js 14 يعمل</p>
         </div>
 
-        <div className="mt-16 text-blue-400 text-sm">
+        <div className="mt-16 text-slate-700 dark:text-blue-400 text-sm">
           <p>Built with Next.js 14, TypeScript, Tailwind CSS & Supabase</p>
           <p className="mt-2">
             <a href="https://github.com/Moeabdelaziz007/axon-project" target="_blank" rel="noopener noreferrer" className="hover:text-blue-300 transition-colors">View on GitHub →</a>
