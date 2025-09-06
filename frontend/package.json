@@ -4,6 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
+    "dev:both": "concurrently \"npm run dev\" \"npm run python:backend\"",
+    "python:backend": "cd /Users/cryptojoker710/Desktop/quantum-brain-mvp && source .axonpy/bin/activate && python web_chat_app.py",
+    "python:setup": "cd /Users/cryptojoker710/Desktop/quantum-brain-mvp && /usr/bin/python3 -m venv .axonpy && source .axonpy/bin/activate && python -m pip install -U pip && pip install Flask==2.3.2 flask-socketio==5.3.4 python-socketio==5.8.0 python-engineio==4.5.1 reportlab==4.0.4 requests==2.31.0",
+    "test:bridge": "curl -sS http://localhost:3000/api/bridge/api/dashboard | head -c 500",
+    "test:bridge:post": "curl -sS -X POST http://localhost:3000/api/bridge/send_message -H 'Content-Type: application/json' -d '{\"message\":\"Hello Quantum-Brain\"}' | head -c 500",
+    "test:socket": "node scripts/test-socket.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -22,6 +28,7 @@
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "18.2.0",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^3.3.0"
   },
   "devDependencies": {
@@ -30,6 +37,7 @@
     "@types/react": "^18.2.33",
     "@types/react-beautiful-dnd": "^13.1.4",
     "@types/react-dom": "^18.2.14",
+    "concurrently": "^9.2.1",
     "eslint": "^8.51.0",
     "eslint-config-next": "14.0.0",
     "prettier": "^3.0.3",
