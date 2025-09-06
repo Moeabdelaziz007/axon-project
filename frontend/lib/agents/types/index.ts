@@ -11,15 +11,14 @@ export type AgentPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 /**
  * Base input interface that all agents must extend.
- * The index signature `[key: string]: any;` makes this type extensible,
- * allowing specific agent inputs to add their own properties.
+ * It includes common properties and an optional `prompt` for task-based agents.
  */
 export interface BaseAgentInput {
-  projectId?: string
-  userId?: string
-  priority?: AgentPriority
-  metadata?: Record<string, any>
-  [key: string]: any; // <-- FIX: Allows for extensible properties like 'prompt'
+  projectId?: string;
+  userId?: string;
+  priority?: AgentPriority;
+  metadata?: Record<string, any>;
+  prompt?: string; // Recommended fix: Explicitly define prompt as an optional property
 }
 
 /**
