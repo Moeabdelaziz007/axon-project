@@ -1,5 +1,5 @@
-import { Sidebar } from '@/components/organisms/Sidebar'; // Will be moved next
-import { Header } from '@/components/organisms/Header';   // Will be moved next
+import { Sidebar } from '@/components/Sidebar/Sidebar';
+import { Header } from '@/components/Header/Header';
 import { AgentGrid } from '@/components/agents/AgentGrid';
 
 /**
