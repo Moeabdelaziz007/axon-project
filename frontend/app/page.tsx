@@ -30,8 +30,13 @@ export default function Dashboard() {
             <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-neon-500 via-neon-400 to-cyberViolet-600 bg-clip-text text-transparent">Axon Quantum</h1>
             <p className="text-mediumGray">Neural Agents. Real-time Flow.</p>
           </div>
-          <div className="text-sm text-mediumGray">
-            {agents.filter(a => a.healthy).length} / {agents.length} Online
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-mediumGray">
+              {agents.filter(a => a.healthy).length} / {agents.length} Online
+            </span>
+            <a href="/dashboard" className="px-4 py-2 rounded-md bg-neon-500 text-carbon-900 font-bold hover:shadow-[0_0_20px_#00FFB9]">
+              Enter Dashboard
+            </a>
           </div>
         </div>
       </header>
