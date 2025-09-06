@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import AgentCard from '@/components/AgentCard'
 import NeuralBackground from '@/components/NeuralBackground'
 
+export const dynamic = 'force-dynamic' // Force dynamic rendering
+
 export default function Dashboard() {
   const [agents, setAgents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,6 +26,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-carbon-900 via-spaceGray-900 to-carbon-800 text-axonWhite">
       <NeuralBackground />
+      <h1>FORCE REFRESH TEST</h1>
       <header className="sticky top-0 z-30 bg-carbon-900/60 backdrop-blur-xl border-b border-spaceGray-800">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
           <div>
