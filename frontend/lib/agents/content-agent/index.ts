@@ -6,6 +6,7 @@ export type ContentAgentInput = {
   prompt: string
   tone?: 'casual' | 'formal' | 'neutral'
   length?: 'short' | 'medium' | 'long'
+  projectId?: string
 }
 
 export type SuccessAgentResult = {
