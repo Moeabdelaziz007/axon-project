@@ -1,139 +1,113 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Carbon fiber subtle pattern and neon glow helpers */
+/*
+ * ======================================================
+ * DESIGN TOKENS
+ * ======================================================
+ * This is the single source of truth for all visual primitives.
+ */
 :root {
+  /* Brand & Semantic Colors */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #f97316;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+
+  /* Typography */
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+
+  /* Spacing & Sizing */
+  --spacing-xs: 0.25rem;  /* 4px */
+  --spacing-sm: 0.5rem;   /* 8px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+  --spacing-xl: 2rem;     /* 32px */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Backgrounds (from previous version) */
   --carbon-bg: radial-gradient(ellipse at top left, rgba(16,20,28,0.7), rgba(11,15,24,0.7)),
                repeating-linear-gradient(45deg, rgba(40,44,52,0.20) 0px, rgba(40,44,52,0.20) 2px, rgba(17,20,27,0.20) 2px, rgba(17,20,27,0.20) 4px);
 }
 
-body {
-  background-image: var(--carbon-bg);
-  background-blend-mode: overlay;
-}
+/*
+ * ======================================================
+ * TAILWIND DIRECTIVES & BASE STYLES
+ * ======================================================
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.neon-border {
-  box-shadow: 0 0 40px rgba(0,255,185,0.4), inset 0 0 12px rgba(72,255,234,0.12);
-}
+@layer base {
+  body {
+    font-family: var(--font-sans), 'Cairo', sans-serif;
+  }
 
-/* Arabic font support */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600&display=swap');
+  /* Improve keyboard navigation */
+  :focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+  }
 
-body {
-  font-family: var(--font-sans), 'Cairo', sans-serif;
-}
+  /* Motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
 
-/* Improve keyboard navigation */
-:focus-visible {
-  outline: 3px solid rgba(59,130,246,.8);
-  outline-offset: 3px;
-}
+  html { scroll-behavior: smooth; }
 
-/* Motion preferences */
-@media (prefers-reduced-motion: reduce) {
+  /* Theme transitions */
   * {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
   }
 }
 
-html { scroll-behavior: smooth; }
-
-/* Theme transitions */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
-/* Dark mode scrollbar */
-.dark ::-webkit-scrollbar-track {
-  background: #1e293b;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-/* RTL support for Arabic text */
-.rtl {
-  direction: rtl;
-  text-align: right;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
+/*
+ * ======================================================
+ * CUSTOM UTILITY CLASSES (from user request)
+ * ======================================================
+ */
+@layer utilities {
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors;
   }
-}
-
-html { scroll-behavior: smooth; }
-
-/* Theme transitions */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
-/* Dark mode scrollbar */
-.dark ::-webkit-scrollbar-track {
-  background: #1e293b;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-/* RTL support for Arabic text */
-.rtl {
-  direction: rtl;
-  text-align: right;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6 border border-gray-100;
+  }
 }

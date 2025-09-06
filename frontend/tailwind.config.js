@@ -1,5 +1,4 @@
-const colors = require('tailwindcss/colors')
-
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
   content: [
@@ -10,23 +9,17 @@ module.exports = {
     extend: {
       colors: {
         // Design tokens from CSS variables
-        primary: {
-          DEFAULT: '#2563eb',
-          dark: '#1d4ed8',
-        },
-        secondary: '#f97316',
-        success: {
-          DEFAULT: '#22c55e',
-          dark: '#16a34a',
-        },
-        danger: {
-          DEFAULT: '#ef4444',
-          dark: '#dc2626',
-        },
-        warning: '#f59e0b',
-        info: '#3b82f6',
-        // Legacy colors
-        neutral: colors.slate,
+        // This makes globals.css the single source of truth for core theme values.
+        primary: 'var(--primary)',
+        'primary-dark': 'var(--primary-dark)',
+        secondary: 'var(--secondary)',
+        success: 'var(--success)',
+        danger: 'var(--danger)',
+        warning: 'var(--warning)',
+        info: 'var(--info)',
+        
+        // Legacy colors (keeping them for now for compatibility)
+        neutral: require('tailwindcss/colors').slate,
         accent: { 500: '#00C48C' },
         // Axon Quantum Theme
         carbon: {
@@ -50,19 +43,22 @@ module.exports = {
         axonWhite: '#F6F6F6',
       },
       spacing: {
+        // Can be mapped to variables later if needed
         '1': '4px', '2': '8px', '3': '12px', '4': '16px',
         '5': '20px', '6': '24px', '8': '32px', '10': '40px',
         '12': '48px', '16': '64px', '20': '80px', '24': '96px',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        mono: ['Roboto Mono', 'monospace'],
+        // Mapped to CSS variables
+        sans: ['var(--font-sans)', 'Cairo', 'sans-serif'],
+        mono: ['var(--font-mono)', 'monospace'],
         arabic: ['Cairo', 'sans-serif'],
       },
       boxShadow: {
-        'sm': '0 1px 2px rgba(0, 0, 0, 0.05)',
-        'md': '0 4px 6px rgba(0, 0, 0, 0.1)',
-        'lg': '0 10px 15px rgba(0, 0, 0, 0.1)',
+        // Mapped to CSS variables
+        sm: 'var(--shadow-sm)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
       },
       animation: {
         'confetti': 'confetti 1.8s linear forwards',
@@ -99,4 +95,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

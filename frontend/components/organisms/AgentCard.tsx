@@ -14,7 +14,7 @@ interface AgentCardProps {
  *
  * A smart, stateful component that represents a single AI agent on the dashboard.
  * It is a self-contained unit that allows users to run an agent, view its status,
- * and see the results.
+ * and see the results, now using our design token system.
  */
 export function AgentCard({ agent }: AgentCardProps) {
   const [status, setStatus] = useState<AgentStatus>('idle');
@@ -39,24 +39,24 @@ export function AgentCard({ agent }: AgentCardProps) {
   const getStatusIndicator = () => {
     switch (status) {
       case 'running':
-        return <span className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400"><Loader2 className="h-3 w-3 animate-spin" />Running</span>;
+        return <span className="flex items-center gap-1.5 text-xs font-medium text-warning"><Loader2 className="h-3 w-3 animate-spin" />Running</span>;
       case 'completed':
-        return <span className="flex items-center gap-1.5 text-xs font-medium text-green-600 dark:text-green-400"><CheckCircle className="h-3 w-3" />Completed</span>;
+        return <span className="flex items-center gap-1.5 text-xs font-medium text-success"><CheckCircle className="h-3 w-3" />Completed</span>;
       case 'error':
-        return <span className="flex items-center gap-1.5 text-xs font-medium text-red-600 dark:text-red-400"><XCircle className="h-3 w-3" />Error</span>;
+        return <span className="flex items-center gap-1.5 text-xs font-medium text-danger"><XCircle className="h-3 w-3" />Error</span>;
       default:
         return <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400"><Bot className="h-3 w-3" />Idle</span>;
     }
   };
 
   return (
-    <div className="group relative flex flex-col justify-between bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+    <div className="group relative flex flex-col justify-between bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
       {/* Card Header */}
       <div className="p-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-100 dark:bg-indigo-900/50 p-2 rounded-lg">
-              <Bot className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />
+            <div className="bg-primary/10 dark:bg-primary/20 p-2 rounded-lg">
+              <Bot className="h-6 w-6 text-primary" />
             </div>
             <h3 className="font-semibold text-slate-900 dark:text-white">{agent.config.name}</h3>
           </div>
@@ -80,7 +80,7 @@ export function AgentCard({ agent }: AgentCardProps) {
         <button
           onClick={handleRunAgent}
           disabled={status === 'running'}
-          className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 dark:disabled:bg-slate-600 text-white font-semibold text-sm py-2 px-4 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
+          className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark disabled:bg-slate-400 dark:disabled:bg-slate-600 text-white font-semibold text-sm py-2 px-4 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-slate-950"
         >
           {status === 'running' ? <Loader2 className="h-5 w-5 animate-spin" /> : <Play className="h-5 w-5" />}
           <span>{status === 'running' ? 'Executing...' : 'Run Agent'}</span>

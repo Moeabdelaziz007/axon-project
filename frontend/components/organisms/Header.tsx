@@ -7,7 +7,8 @@ import { ThemeToggle } from '@/components/molecules/ThemeToggle';
  * Header Component (Organism)
  *
  * Sits at the top of the main content area. It is a self-contained unit
- * that provides search, notifications, and theme-switching functionality.
+ * that provides search, notifications, and theme-switching functionality,
+ * now using design tokens.
  */
 export function Header() {
   return (
@@ -19,7 +20,7 @@ export function Header() {
           <input
             type="search"
             placeholder="Search agents, tasks, or results..."
-            className="w-64 lg:w-96 bg-slate-100 dark:bg-slate-800/50 border-transparent rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-64 lg:w-96 bg-slate-100 dark:bg-slate-800/50 border-transparent rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
       </div>
@@ -33,7 +34,7 @@ export function Header() {
         <button className="relative p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800/50">
           <Bell className="h-6 w-6" />
           {/* Notification dot */}
-          <span className="absolute top-2 right-2 block h-2 w-2 rounded-full bg-indigo-500 ring-2 ring-white dark:ring-slate-950"></span>
+          <span className="absolute top-2 right-2 block h-2 w-2 rounded-full bg-primary ring-2 ring-white dark:ring-slate-950"></span>
         </button>
 
         {/* You can add a user menu here if needed */}

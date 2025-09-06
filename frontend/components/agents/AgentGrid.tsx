@@ -1,59 +1,75 @@
-"use client";
+'use client';
 
-import dynamic from 'next/dynamic';
-import { useMemoizedValue } from '@/hooks/useMemoizedValue';
-import { useAgents } from './hooks/useAgents';
+import { useState } from 'react';
+import { agentRegistry } from '@/lib/agentRegistry';
+import { runAgent } from '@/lib/bridge';
+import type { AgentResult, AgentStatus } from '@/lib/agents/types';
+import { AgentCard } from './AgentCard';
 
-// Lazy load AgentCard with loading placeholder
-const LazyAgentCard = dynamic(() => import('@/components/agents/AgentCard'), {
-  loading: () => <div className="animate-pulse bg-spaceGray-800 h-48 rounded-3xl"></div>,
-  ssr: false
-});
+// Define a type for the state of all agents
+type AgentsState = {
+  [key: string]: {
+    status: AgentStatus;
+    result: AgentResult | null;
+  };
+};
 
-interface AgentGridProps {
-  className?: string;
-}
+/**
+ * A smart component that manages the state and logic for the grid of AI agents.
+ * It handles agent execution and passes down state to presentational AgentCard components.
+ * @returns {JSX.Element} The rendered grid of agent cards.
+ */
+export function AgentGrid() {
+  const agents = Array.from(agentRegistry.values());
 
-export default function AgentGrid({ className = '' }: AgentGridProps) {
-  const { agents, loading, error } = useAgents();
+  // A single state object to manage all agents
+  const [agentsState, setAgentsState] = useState<AgentsState>(
+    agents.reduce((acc, agent) => {
+      acc[agent.config.type] = { status: 'idle', result: null };
+      return acc;
+    }, {} as AgentsState)
+  );
 
-  // Memoize agents to prevent unnecessary re-renders
-  const memoizedAgents = useMemoizedValue(agents, [agents]);
+  // Handler to run an agent, now located in the parent container
+  const handleRunAgent = async (agentType: keyof AgentsState) => {
+    // Update state for the specific agent to 'running'
+    setAgentsState(prevState => ({
+      ...prevState,
+      [agentType]: { status: 'running', result: null },
+    }));
 
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="animate-pulse bg-spaceGray-800 h-48 rounded-3xl"></div>
-        ))}
-      </div>
-    );
-  }
+    const response = await runAgent({
+      agentType,
+      input: {
+        // This is a placeholder. In a real app, you'd get this from a form or modal.
+        prompt: `Execute a default task for the ${agentType} agent.`,
+      },
+    });
 
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-400 mb-4">Failed to load agents</p>
-        <p className="text-mediumGray text-sm">{error}</p>
-      </div>
-    );
-  }
-
-  if (memoizedAgents.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-mediumGray">No agents available</p>
-      </div>
-    );
-  }
+    // Update state with the final result
+    setAgentsState(prevState => ({
+      ...prevState,
+      [agentType]: {
+        status: response.ok ? 'completed' : 'error',
+        result: response,
+      },
+    }));
+  };
 
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
-      {memoizedAgents.map((agent) => (
-        <LazyAgentCard key={agent.id} agent={agent} />
-      ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {agents.map(agentEntry => {
+        const agentState = agentsState[agentEntry.config.type];
+        return (
+          <AgentCard
+            key={agentEntry.config.type}
+            agent={agentEntry}
+            status={agentState.status}
+            result={agentState.result}
+            onRun={() => handleRunAgent(agentEntry.config.type)}
+          />
+        );
+      })}
     </div>
   );
 }
-
-
