@@ -48,81 +48,50 @@ export default function RootLayout({
         </div>
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-white text-black px-3 py-2 rounded">Skip to main content</a>
         <main id="main-content" role="main">{children}</main>
-        <script dangerouslySetInnerHTML={{__html: `
-          (function() {
-            const root = document.documentElement;
-            
-            // Get stored theme or system preference
-            const getTheme = () => {
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              const root = document.documentElement;
               const stored = localStorage.getItem('theme');
-              if (stored) return stored;
-              return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            };
-            
-            // Apply theme immediately (before DOMContentLoaded)
-            const theme = getTheme();
-            if (theme === 'dark') {
-              root.classList.add('dark');
-            } else {
-              root.classList.remove('dark');
-            }
-            
-            // Update icon states
-            const updateIcons = (isDark) => {
-              const sun = document.getElementById('icon-sun');
-              const moon = document.getElementById('icon-moon');
-              if (sun && moon) {
-                if (isDark) {
-                  sun.style.transform = 'scale(0)';
-                  moon.style.transform = 'scale(1)';
-                } else {
-                  sun.style.transform = 'scale(1)';
-                  moon.style.transform = 'scale(0)';
-                }
-              }
-            };
-            
-            // Initialize icons
-            updateIcons(theme === 'dark');
-            
-            // Update theme status indicator
-            const updateThemeStatus = (currentTheme) => {
-              const statusEl = document.getElementById('theme-status');
-              if (statusEl) {
-                statusEl.textContent = `Theme: ${currentTheme === 'dark' ? 'Dark' : 'Light'}`;
-              }
-            };
-            
-            // Initialize theme status
-            updateThemeStatus(theme);
-            
-            // Theme toggle handler
-            document.addEventListener('DOMContentLoaded', function() {
-              const btn = document.getElementById('theme-toggle');
-              if (!btn) return;
+              const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+              const isDark = stored === 'dark' || (!stored && systemDark);
               
-              btn.addEventListener('click', function() {
-                const isDark = root.classList.toggle('dark');
-                const newTheme = isDark ? 'dark' : 'light';
-                localStorage.setItem('theme', newTheme);
-                updateIcons(isDark);
-                updateThemeStatus(newTheme);
+              if (isDark) {
+                root.classList.add('dark');
+              } else {
+                root.classList.remove('dark');
+              }
+              
+              document.addEventListener('DOMContentLoaded', function() {
+                const btn = document.getElementById('theme-toggle');
+                if (!btn) return;
                 
-                // Haptic feedback
-                try { 
-                  if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate(10);
+                btn.addEventListener('click', function() {
+                  const newIsDark = root.classList.toggle('dark');
+                  localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+                  
+                  const sun = document.getElementById('icon-sun');
+                  const moon = document.getElementById('icon-moon');
+                  if (sun && moon) {
+                    sun.style.transform = newIsDark ? 'scale(0)' : 'scale(1)';
+                    moon.style.transform = newIsDark ? 'scale(1)' : 'scale(0)';
                   }
-                } catch(e) {}
-                
-                // Dispatch theme change event for other components
-                window.dispatchEvent(new CustomEvent('themechange', { 
-                  detail: { theme: newTheme, isDark } 
-                }));
+                  
+                  const statusEl = document.getElementById('theme-status');
+                  if (statusEl) {
+                    statusEl.textContent = 'Theme: ' + (newIsDark ? 'Dark' : 'Light');
+                  }
+                  
+                  try { 
+                    if (window.navigator && window.navigator.vibrate) {
+                      window.navigator.vibrate(10);
+                    }
+                  } catch(e) {}
+                });
               });
-            });
-          })();
-        `}} />
+            })();
+          `
+        }} />
       </body>
     </html>
   )
