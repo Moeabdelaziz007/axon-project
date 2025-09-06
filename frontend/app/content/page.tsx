@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function ContentAgentPage() {
   const [prompt, setPrompt] = useState('Write a short launch announcement for Axon')
@@ -9,6 +9,24 @@ export default function ContentAgentPage() {
   const [output, setOutput] = useState('')
   const [runId, setRunId] = useState<string | null>(null)
   const [savedFile, setSavedFile] = useState<string | null>(null)
+  const [artifacts, setArtifacts] = useState<any[]>([])
+  const [loadingList, setLoadingList] = useState(false)
+
+  async function loadArtifacts() {
+    setLoadingList(true)
+    try {
+      const res = await fetch('/api/artifacts/list', { cache: 'no-store' })
+      const data = await res.json()
+      if (res.ok && data?.ok) {
+        setArtifacts(data.items || [])
+      }
+    } catch {}
+    setLoadingList(false)
+  }
+
+  useEffect(() => {
+    loadArtifacts()
+  }, [])
 
   async function runAgent() {
     setLoading(true)
@@ -41,6 +59,8 @@ export default function ContentAgentPage() {
         })
         const saveJson = await save.json()
         if (save.ok && saveJson?.ok) setSavedFile(saveJson.file)
+        // refresh list
+        loadArtifacts()
       } else {
         setOutput(`Error: ${data?.result?.error || 'Unknown error'}`)
       }
@@ -104,6 +124,30 @@ export default function ContentAgentPage() {
           )}
         </div>
       )}
+
+      <div className="rounded-md border p-4 bg-white/60 dark:bg-zinc-900/60">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-medium">Recent Artifacts</h2>
+          <button className="text-sm text-blue-600 hover:underline" onClick={loadArtifacts} disabled={loadingList}>
+            {loadingList ? 'Refreshing…' : 'Refresh'}
+          </button>
+        </div>
+        {artifacts.length === 0 ? (
+          <p className="text-sm text-gray-500">No artifacts yet.</p>
+        ) : (
+          <ul className="space-y-2">
+            {artifacts.map((a) => (
+              <li key={a.file} className="rounded border p-2 bg-white/50 dark:bg-zinc-900/50">
+                <div className="text-xs text-gray-500">{a.savedAt || a.timestamp || ''}</div>
+                <div className="text-sm font-medium">{a.file}</div>
+                <pre className="text-xs mt-1 max-h-24 overflow-auto whitespace-pre-wrap">
+                  {(a.output || '').slice(0, 400)}{(a.output || '').length > 400 ? '…' : ''}
+                </pre>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }
