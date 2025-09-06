@@ -1,16 +1,10 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
-  const router = useRouter()
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push('/dashboard')
-    }, 2000)
-    return () => clearTimeout(timer)
     // particles background
     const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement | null
     const ctx = canvas?.getContext('2d') || null
@@ -77,10 +71,10 @@ export default function HomePage() {
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMouseMove)
     }
-  }, [router])
+  }, [])
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-sky-50 to-teal-50 dark:from-indigo-900 dark:via-indigo-800 dark:to-blue-900 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-sky-50 to-teal-50 dark:from-indigo-900 dark:via-indigo-800 dark:to-blue-900 overflow-hidden">
       <canvas id="particle-canvas" aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-50 dark:opacity-40"></canvas>
       <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
         <div className="mb-8">
@@ -112,6 +106,6 @@ export default function HomePage() {
           </p>
         </div>
       </div>
-    </main>
+    </div>
   )
 }
