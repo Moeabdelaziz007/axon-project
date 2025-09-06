@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs'
 
@@ -26,9 +26,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Save to Supabase
-    if (supabase) {
-      const { error } = await supabase
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  );
+    const { error } = await supabase
         .from('artifacts')
         .insert([
           {
@@ -43,7 +45,6 @@ export async function POST(req: NextRequest) {
         console.error('Supabase error:', error)
         // Don't block, just log the error
       }
-    }
 
     // Save locally as a fallback or for dev
     const baseDir = process.env.VERCEL || process.env.NODE_ENV === 'production'
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ 
       ok: true, 
       file: path.relative(process.cwd(), filePath),
-      source: supabase ? 'Supabase & Local' : 'Local Only' 
+      source: 'Supabase & Local' 
     })
   } catch (error: any) {
     return NextResponse.json(

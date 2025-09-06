@@ -10,6 +10,3 @@ export { AgentActions } from './components/AgentActions';
 
 // Hooks
 export { useAgents } from './hooks/useAgents';
-
-// Types
-export type { Agent } from './types';

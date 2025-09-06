@@ -1,27 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
-  // Prefer Supabase if available
-  if (supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('artifacts')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(50)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  );
+  
+  try {
+    const { data, error } = await supabase
+      .from('artifacts')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50)
 
-      if (error) {
-        throw error
-      }
-      return NextResponse.json({ ok: true, items: data, source: 'Supabase' })
-    } catch (error: any) {
-      return NextResponse.json({ ok: false, error: error?.message || 'Failed to list artifacts from Supabase' }, { status: 500 })
+    if (error) {
+      throw error
     }
+    return NextResponse.json({ ok: true, items: data, source: 'Supabase' })
+  } catch (error: any) {
+    return NextResponse.json({ ok: false, error: error?.message || 'Failed to list artifacts from Supabase' }, { status: 500 })
   }
 
   // Fallback to local filesystem
@@ -49,5 +51,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: error?.message || 'Failed to list artifacts' }, { status: 500 })
   }
 }
-
-

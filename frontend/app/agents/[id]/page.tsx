@@ -56,7 +56,7 @@ export default function AgentPage() {
       <div className="min-h-screen bg-gradient-to-br from-carbon-900 via-spaceGray-900 to-carbon-800 text-axonWhite flex items-center justify-center">
         <Card variant="quantum">
           <h1 className="text-2xl font-bold text-center">Agent Not Found</h1>
-          <p className="text-mediumGray mt-2 text-center">The agent "{agentId}" does not exist.</p>
+          <p className="text-mediumGray mt-2 text-center">The agent &quot;{agentId}&quot; does not exist.</p>
         </Card>
       </div>
     );
