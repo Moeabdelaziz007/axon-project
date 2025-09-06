@@ -1,3 +1,51 @@
+"use client"
+
+import { useEffect, useState } from 'react'
+import AgentGrid from '@/components/AgentGrid'
+
+export default function DashboardPage() {
+  const [agents, setAgents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadAgents() {
+      try {
+        const res = await fetch('/api/agents', { cache: 'no-store' })
+        const data = await res.json()
+        if (res.ok && data?.agents) setAgents(data.agents)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadAgents()
+  }, [])
+
+  return (
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 bg-carbon-900/60 backdrop-blur-xl border-b border-spaceGray-800">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-neon-500 via-neon-400 to-cyberViolet-600 bg-clip-text text-transparent">Dashboard</h1>
+            <p className="text-mediumGray">Manage agents, launch runs, and view results.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <a href="/" className="px-4 py-2 rounded-md bg-spaceGray-800 text-axonWhite border border-spaceGray-800">Home</a>
+            <a href="/content" className="px-4 py-2 rounded-md bg-neon-500 text-carbon-900 font-bold hover:shadow-[0_0_20px_#00FFB9]">Content Agent</a>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-mediumGray">Agents</h2>
+        </section>
+
+        <AgentGrid />
+      </main>
+    </div>
+  )
+}
+
 'use client'
 
 import { useState, useEffect } from 'react'
