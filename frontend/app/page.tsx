@@ -88,15 +88,27 @@ export default function HomePage() {
         </div>
 
         <div className="mb-8">
-          <div aria-hidden="true" className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 dark:border-blue-400 mx-auto mb-4"></div>
-          <p className="text-slate-700 dark:text-blue-200 text-lg">جاري التحميل...</p>
-          <p className="text-slate-600 dark:text-blue-300 text-sm mt-2">سيتم توجيهك إلى لوحة التحكم خلال ثانيتين</p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <a href="/dashboard" className="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-6 py-3 font-semibold text-white shadow-lg shadow-indigo-900/40 transition hover:-translate-y-0.5 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950">
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+              </svg>
+              Dashboard
+            </a>
+            <a href="#features" className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950">
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+              Features
+            </a>
+          </div>
         </div>
 
         <div className="text-slate-600 dark:text-blue-300 text-sm">
-          <p>✅ Supabase متصل</p>
-          <p>✅ قاعدة البيانات جاهزة</p>
-          <p>✅ Next.js 14 يعمل</p>
+          <p>✅ Particle animations active</p>
+          <p>✅ Dark mode toggle ready</p>
+          <p>✅ Responsive design</p>
         </div>
 
         <div className="mt-16 text-slate-700 dark:text-blue-400 text-sm">
