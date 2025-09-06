@@ -73,7 +73,7 @@ export default function ContentAgentPage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Content Agent</h1>
+      <h1 className="text-2xl font-semibold">Content Agent (Live)</h1>
       <div className="space-y-4">
         <label className="block">
           <span className="text-sm text-gray-500">Prompt</span>
