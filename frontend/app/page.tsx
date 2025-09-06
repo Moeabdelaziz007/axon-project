@@ -31,7 +31,11 @@ export default function HomePage() {
     function draw() {
       if (!canvas || !ctx) return
       ctx.clearRect(0, 0, width, height)
-      ctx.fillStyle = 'rgba(255,255,255,0.7)'
+      
+      // Dynamic particle color based on theme
+      const isDark = document.documentElement.classList.contains('dark')
+      ctx.fillStyle = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(99,102,241,0.4)'
+      
       for (const p of particles) {
         p.x += p.dx
         p.y += p.dy
@@ -109,6 +113,7 @@ export default function HomePage() {
           <p>✅ Particle animations active</p>
           <p>✅ Dark mode toggle ready</p>
           <p>✅ Responsive design</p>
+          <p id="theme-status" className="text-xs opacity-75">Theme: Loading...</p>
         </div>
 
         <div className="mt-16 text-slate-700 dark:text-blue-400 text-sm">
