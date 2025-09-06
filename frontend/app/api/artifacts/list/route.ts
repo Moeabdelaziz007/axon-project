@@ -6,7 +6,10 @@ export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
   try {
-    const artifactsDir = path.join(process.cwd(), 'data', 'artifacts')
+    const baseDir = process.env.VERCEL || process.env.NODE_ENV === 'production'
+      ? path.join('/tmp', 'artifacts')
+      : path.join(process.cwd(), 'data', 'artifacts')
+    const artifactsDir = baseDir
     await fs.mkdir(artifactsDir, { recursive: true })
     const files = await fs.readdir(artifactsDir)
     const items = await Promise.all(
