@@ -29,7 +29,7 @@ export function DashboardLayout() {
             {/* Welcome Message or Title */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Axon Agent Dashboard</h1>
-              <p className="mt-1 text-slate-500 dark:text-slate-400">Your project's nerve center. Monitor and dispatch AI agents.</p>
+              <p className="mt-1 text-slate-500 dark:text-slate-400">Your project&apos;s nerve center. Monitor and dispatch AI agents.</p>
             </div>
 
             {/* Agent Cards Grid */}
