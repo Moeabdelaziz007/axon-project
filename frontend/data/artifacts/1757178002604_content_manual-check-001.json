@@ -1,0 +1,10 @@
+{
+  "runId": "manual-check-001",
+  "agentType": "content",
+  "output": "hello world",
+  "provider": "test",
+  "metadata": {
+    "searchQuery": ""
+  },
+  "timestamp": "2025-09-06T17:00:02.604Z"
+}

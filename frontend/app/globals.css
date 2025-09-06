@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Carbon fiber subtle pattern and neon glow helpers */
+:root {
+  --carbon-bg: radial-gradient(ellipse at top left, rgba(16,20,28,0.7), rgba(11,15,24,0.7)),
+               repeating-linear-gradient(45deg, rgba(40,44,52,0.20) 0px, rgba(40,44,52,0.20) 2px, rgba(17,20,27,0.20) 2px, rgba(17,20,27,0.20) 4px);
+}
+
+body {
+  background-image: var(--carbon-bg);
+  background-blend-mode: overlay;
+}
+
+.neon-border {
+  box-shadow: 0 0 40px rgba(0,255,185,0.4), inset 0 0 12px rgba(72,255,234,0.12);
+}
+
 /* Arabic font support */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
 
