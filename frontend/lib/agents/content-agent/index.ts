@@ -1,6 +1,6 @@
 import { BaseAgentInput, AgentResult, SuccessAgentResult, ErrorAgentResult, AgentType } from '../types';
-import { ToolOrchestrator, ToolExecution } from '../../lib/tools/ToolOrchestrator';
-import { contentTools } from '../../lib/tools/contentTools';
+import { ToolOrchestrator, ToolExecution } from '@/lib/tools/ToolOrchestrator'; // Updated import path
+import { contentTools } from '@/lib/tools/contentTools'; // Updated import path
 
 export interface ContentAgentInput extends BaseAgentInput {
   prompt: string;
