@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion'
+import { memo } from 'react'
 
 type Agent = {
   name: string
@@ -9,7 +10,7 @@ type Agent = {
   type: string
 }
 
-export default function AgentCard({ agent }: { agent: Agent }) {
+function AgentCard({ agent }: { agent: Agent }) {
   return (
     <motion.div
       className="relative rounded-3xl p-8 shadow-[0_0_48px_#00FFB9BB] bg-spaceGray-900/80 border border-spaceGray-800 overflow-hidden group backdrop-blur-2xl hover:shadow-[0_0_80px_#50FFEEA0] transition-all"
@@ -38,5 +39,15 @@ export default function AgentCard({ agent }: { agent: Agent }) {
     </motion.div>
   )
 }
+
+// Memoize AgentCard to prevent unnecessary re-renders
+export default memo(AgentCard, (prevProps, nextProps) => {
+  return (
+    prevProps.agent.name === nextProps.agent.name &&
+    prevProps.agent.description === nextProps.agent.description &&
+    prevProps.agent.healthy === nextProps.agent.healthy &&
+    prevProps.agent.type === nextProps.agent.type
+  )
+})
 
 
