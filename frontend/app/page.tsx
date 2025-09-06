@@ -1,128 +1,199 @@
-'use client'
+"use client"
 
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 
-export default function HomePage() {
+export default function Dashboard() {
+  const [agents, setAgents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // particles background
-    const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement | null
-    const ctx = canvas?.getContext('2d') || null
-    let frame = 0
-    let raf = 0
-    let particles: { x: number; y: number; dx: number; dy: number; size: number }[] = []
-    let width = 0
-    let height = 0
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    function resize() {
-      if (!canvas) return
-      width = canvas.width = window.innerWidth
-      height = canvas.height = window.innerHeight
-      particles = Array.from({ length: prefersReduced ? 40 : 100 }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        dx: (Math.random() - 0.5) * 1.2,
-        dy: (Math.random() - 0.5) * 1.2,
-        size: Math.random() * 2 + 0.6,
-      }))
-    }
-
-    function draw() {
-      if (!canvas || !ctx) return
-      ctx.clearRect(0, 0, width, height)
-      
-      // Dynamic particle color based on theme
-      const isDark = document.documentElement.classList.contains('dark')
-      ctx.fillStyle = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(99,102,241,0.4)'
-      
-      for (const p of particles) {
-        p.x += p.dx
-        p.y += p.dy
-        if (p.x < 0 || p.x > width) p.dx *= -1
-        if (p.y < 0 || p.y > height) p.dy *= -1
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fill()
-      }
-      frame++
-      raf = requestAnimationFrame(draw)
-    }
-
-    function onMouseMove(e: MouseEvent) {
-      if (!particles.length) return
-      const mx = e.clientX
-      const my = e.clientY
-      for (const p of particles) {
-        const dx = mx - p.x
-        const dy = my - p.y
-        const dist = Math.max(1, Math.hypot(dx, dy))
-        const force = 20 / dist
-        p.dx += (dx / dist) * force * 0.02
-        p.dy += (dy / dist) * force * 0.02
+    async function loadAgents() {
+      try {
+        const res = await fetch('/api/agents', { cache: 'no-store' })
+        const data = await res.json()
+        if (res.ok && data?.agents) {
+          setAgents(data.agents)
+        }
+      } catch (error) {
+        console.error('Failed to load agents:', error)
+      } finally {
+        setLoading(false)
       }
     }
-
-    if (canvas && ctx && !prefersReduced) {
-      resize()
-      draw()
-      window.addEventListener('resize', resize)
-      window.addEventListener('mousemove', onMouseMove)
-    }
-
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resize)
-      window.removeEventListener('mousemove', onMouseMove)
-    }
+    loadAgents()
   }, [])
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-sky-50 to-teal-50 dark:from-indigo-900 dark:via-indigo-800 dark:to-blue-900 overflow-hidden">
-      <canvas id="particle-canvas" aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-50 dark:opacity-40"></canvas>
-      <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-        <div className="mb-8">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-emerald-600 dark:from-blue-400 dark:to-teal-400">
-              Axon
-            </span>
-          </h1>
-          <p className="text-xl text-slate-600 dark:text-blue-200 font-light">المحور العصبي لمشروعك</p>
-          <p className="text-lg text-slate-700 dark:text-blue-300 mt-2">The Nerve Center for Your Project</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Header */}
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Axon</h1>
+              <p className="text-gray-600 dark:text-gray-300">The Nerve Center for Your Project</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {agents.filter(a => a.healthy).length} / {agents.length} Agents Online
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Welcome to Your AI Agent Hub
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Transform your ideas into reality with our powerful AI agents. From content creation to code generation, 
+            research analysis to design automation - everything you need in one place.
+          </p>
         </div>
 
-        <div className="mb-8">
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <a href="/dashboard" className="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-6 py-3 font-semibold text-white shadow-lg shadow-indigo-900/40 transition hover:-translate-y-0.5 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950">
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
-              </svg>
-              Dashboard
-            </a>
-            <a href="#features" className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-950">
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-              </svg>
-              Features
-            </a>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Content Agent</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  {agents.find(a => a.type === 'content')?.healthy ? 'Online' : 'Offline'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Code Agent</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  {agents.find(a => a.type === 'code')?.healthy ? 'Online' : 'Offline'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Research Agent</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  {agents.find(a => a.type === 'research')?.healthy ? 'Online' : 'Offline'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+                <svg className="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Design Agent</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  {agents.find(a => a.type === 'design')?.healthy ? 'Online' : 'Offline'}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="text-slate-600 dark:text-blue-300 text-sm">
-          <p>✅ Particle animations active</p>
-          <p>✅ Dark mode toggle ready</p>
-          <p>✅ Responsive design</p>
-          <p id="theme-status" className="text-xs opacity-75">Theme: Loading...</p>
+        {/* Agent Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading agents...</p>
+            </div>
+          ) : (
+            agents.map((agent) => (
+              <div key={agent.type} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{agent.name}</h3>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      agent.healthy 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    }`}>
+                      {agent.healthy ? 'Online' : 'Offline'}
+                    </div>
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{agent.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">v{agent.version}</span>
+                    <Link 
+                      href={`/${agent.type}`}
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                    >
+                      Launch
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
-        <div className="mt-16 text-slate-700 dark:text-blue-400 text-sm">
-          <p>Built with Next.js 14, TypeScript, Tailwind CSS & Supabase</p>
-          <p className="mt-2">
-            <a href="https://github.com/Moeabdelaziz007/axon-project" target="_blank" rel="noopener noreferrer" className="hover:text-blue-300 transition-colors">View on GitHub →</a>
-          </p>
+        {/* Quick Actions */}
+        <div className="mt-12 text-center">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Quick Actions</h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link 
+              href="/content"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Create Content
+            </Link>
+            <Link 
+              href="/code"
+              className="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+              Generate Code
+            </Link>
+            <Link 
+              href="/research"
+              className="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Research Analysis
+            </Link>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   )
 }
