@@ -1,16 +1,17 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { useAgentExecutor } from '@/hooks/useAgentExecutor'
 
 export default function ContentAgentPage() {
   const [prompt, setPrompt] = useState('Write a short launch announcement for Axon')
   const [tone, setTone] = useState<'neutral' | 'casual' | 'formal'>('neutral')
   const [length, setLength] = useState<'short' | 'medium' | 'long'>('medium')
-  const [loading, setLoading] = useState(false)
-  const [output, setOutput] = useState('')
   const [runId, setRunId] = useState<string | null>(null)
   const [savedFile, setSavedFile] = useState<string | null>(null)
   const [artifacts, setArtifacts] = useState<any[]>([])
   const [loadingList, setLoadingList] = useState(false)
+
+  const { executeAgent, isExecuting, result, error, clearResult } = useAgentExecutor()
 
   async function loadArtifacts() {
     setLoadingList(true)
@@ -29,27 +30,15 @@ export default function ContentAgentPage() {
   }, [])
 
   async function runAgent() {
-    setLoading(true)
-    setOutput('')
-    setSavedFile(null)
     try {
-      const res = await fetch('/api/agents/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          agentType: 'content',
-          input: { prompt, tone, length },
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Request failed')
-      setRunId(data.runId)
+      clearResult()
+      const data = await executeAgent('content', { prompt, tone, length })
+      setRunId(data.runId || `content-${Date.now()}`)
+      
       if (data?.result?.ok) {
-        setOutput(data.result.output)
-
         // Create a payload from the successful result
         const artifactPayload = {
-          runId: data.runId,
+          runId: data.runId || `content-${Date.now()}`,
           agentType: 'content',
           ...data.result, // Spread all properties from the successful result
         };
@@ -64,13 +53,9 @@ export default function ContentAgentPage() {
         if (save.ok && saveJson?.ok) setSavedFile(saveJson.file)
         // refresh list
         loadArtifacts()
-      } else {
-        setOutput(`Error: ${data?.result?.error || 'Unknown error'}`)
       }
     } catch (e: any) {
-      setOutput(`Error: ${e?.message || 'Unknown error'}`)
-    } finally {
-      setLoading(false)
+      console.error('Agent execution failed:', e)
     }
   }
 
@@ -123,10 +108,10 @@ export default function ContentAgentPage() {
         </div>
         <button
           onClick={runAgent}
-          disabled={loading}
+          disabled={isExecuting}
           className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
         >
-          {loading ? 'Running…' : 'Run Content Agent'}
+          {isExecuting ? 'Running…' : 'Run Content Agent'}
         </button>
       </div>
 
@@ -134,13 +119,20 @@ export default function ContentAgentPage() {
         <p className="text-sm text-gray-500">Run ID: {runId}</p>
       )}
 
-      {output && (
+      {result && (
         <div className="rounded-md border p-4 bg-white/60 dark:bg-zinc-900/60">
           <h2 className="font-medium mb-2">Output</h2>
-          <pre className="whitespace-pre-wrap text-sm">{output}</pre>
+          <pre className="whitespace-pre-wrap text-sm">{result.result?.output || result.output}</pre>
           {savedFile && (
             <p className="text-xs text-green-600 mt-2">Saved: {savedFile}</p>
           )}
+        </div>
+      )}
+
+      {error && (
+        <div className="rounded-md border border-red-200 bg-red-50 dark:bg-red-900/20 p-4">
+          <h2 className="font-medium mb-2 text-red-800 dark:text-red-200">Error</h2>
+          <pre className="whitespace-pre-wrap text-sm text-red-700 dark:text-red-300">{error}</pre>
         </div>
       )}
 

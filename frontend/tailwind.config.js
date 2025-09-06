@@ -9,11 +9,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: colors.indigo,
+        // Design tokens from CSS variables
+        primary: {
+          DEFAULT: '#2563eb',
+          dark: '#1d4ed8',
+        },
+        secondary: '#f97316',
+        success: {
+          DEFAULT: '#22c55e',
+          dark: '#16a34a',
+        },
+        danger: {
+          DEFAULT: '#ef4444',
+          dark: '#dc2626',
+        },
+        warning: '#f59e0b',
+        info: '#3b82f6',
+        // Legacy colors
         neutral: colors.slate,
-        success: colors.emerald,
-        warning: colors.amber,
-        danger: colors.red,
         accent: { 500: '#00C48C' },
         // Axon Quantum Theme
         carbon: {
@@ -43,7 +56,13 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        mono: ['Roboto Mono', 'monospace'],
         arabic: ['Cairo', 'sans-serif'],
+      },
+      boxShadow: {
+        'sm': '0 1px 2px rgba(0, 0, 0, 0.05)',
+        'md': '0 4px 6px rgba(0, 0, 0, 0.1)',
+        'lg': '0 10px 15px rgba(0, 0, 0, 0.1)',
       },
       animation: {
         'confetti': 'confetti 1.8s linear forwards',

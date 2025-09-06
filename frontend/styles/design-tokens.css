@@ -1,0 +1,45 @@
+/* frontend/styles/design-tokens.css */
+:root {
+  /* الألوان */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #f97316;
+  --success: #22c55e;
+  --success-dark: #16a34a;
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  
+  /* الخطوط */
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+  
+  /* الأبعاد */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* الظلال */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* استخدام المتغيرات في Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* تخصيص Tailwind */
+@layer utilities {
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6 border border-gray-100;
+  }
+}

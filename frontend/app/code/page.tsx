@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import NeuralBackground from '@/components/NeuralBackground';
+import { useAgentExecutor } from '@/hooks/useAgentExecutor';
 
 interface Artifact {
   id: string;
@@ -18,9 +19,9 @@ export default function CodeAgentPage() {
   const [language, setLanguage] = useState('TypeScript/JavaScript');
   const [framework, setFramework] = useState('React/Next.js');
   const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<string>('');
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
+
+  const { executeAgent, isExecuting, result, error, clearResult } = useAgentExecutor();
 
   useEffect(() => {
     loadArtifacts();
@@ -41,51 +42,35 @@ export default function CodeAgentPage() {
   const runAgent = async () => {
     if (!prompt.trim()) return;
 
-    setLoading(true);
-    setResult('');
-
     try {
-      const response = await fetch('/api/agents/code', {
+      clearResult();
+      const data = await executeAgent('code', {
+        prompt,
+        language,
+        framework,
+        complexity
+      });
+      
+      // Save artifact
+      await fetch('/api/artifacts/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt,
-          language,
-          framework,
-          complexity
+          runId: `code-${Date.now()}`,
+          agentType: 'code',
+          output: data.result?.output || data.output,
+          provider: data.result?.provider || data.provider,
+          language: data.result?.language || language,
+          framework: data.result?.framework || framework,
+          complexity: data.result?.complexity || complexity,
+          prompt: prompt
         })
       });
 
-      const data = await response.json();
-      
-      if (data.result?.success) {
-        setResult(data.result.output);
-        
-        // Save artifact
-        await fetch('/api/artifacts/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            runId: `code-${Date.now()}`,
-            agentType: 'code',
-            output: data.result.output,
-            provider: data.result.provider,
-            language: data.result.language,
-            framework: data.result.framework,
-            complexity: data.result.complexity,
-            prompt: prompt
-          })
-        });
-
-        // Reload artifacts
-        loadArtifacts();
-      } else {
-        setResult(`Error: ${data.result?.error || 'Unknown error'}`);
-      }
+      // Reload artifacts
+      loadArtifacts();
     } catch (error) {
-      setResult(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
-      setLoading(false);
+      console.error('Agent execution failed:', error);
     }
   };
 
@@ -169,10 +154,10 @@ export default function CodeAgentPage() {
 
               <button
                 onClick={runAgent}
-                disabled={loading || !prompt.trim()}
+                disabled={isExecuting || !prompt.trim()}
                 className="w-full px-6 py-3 bg-gradient-to-r from-neon-500 via-neon-400 to-cyberViolet-600 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-neon-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {loading ? 'Generating Code...' : 'Generate Code'}
+                {isExecuting ? 'Generating Code...' : 'Generate Code'}
               </button>
             </div>
           </div>
@@ -184,12 +169,19 @@ export default function CodeAgentPage() {
             {result ? (
               <div className="bg-spaceGray-900 rounded-lg p-4 border border-spaceGray-700">
                 <pre className="text-sm text-axonWhite whitespace-pre-wrap overflow-x-auto">
-                  {result}
+                  {result.result?.output || result.output}
                 </pre>
               </div>
             ) : (
               <div className="text-mediumGray text-center py-12">
                 Generated code will appear here...
+              </div>
+            )}
+
+            {error && (
+              <div className="mt-4 bg-red-900/20 border border-red-800 rounded-lg p-4">
+                <h3 className="font-medium text-red-400 mb-2">Error</h3>
+                <pre className="text-sm text-red-300 whitespace-pre-wrap">{error}</pre>
               </div>
             )}
           </div>
