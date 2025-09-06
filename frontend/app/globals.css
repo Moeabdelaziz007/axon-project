@@ -9,6 +9,12 @@ body {
   font-family: 'Inter', 'Cairo', sans-serif;
 }
 
+/* Improve keyboard navigation */
+:focus-visible {
+  outline: 3px solid rgba(59,130,246,.8);
+  outline-offset: 3px;
+}
+
 /* RTL support for Arabic text */
 .rtl {
   direction: rtl;
