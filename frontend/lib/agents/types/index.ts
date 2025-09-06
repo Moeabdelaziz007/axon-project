@@ -10,13 +10,16 @@ export type AgentStatus = 'idle' | 'running' | 'completed' | 'error'
 export type AgentPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 /**
- * Base input interface that all agents must extend
+ * Base input interface that all agents must extend.
+ * The index signature `[key: string]: any;` makes this type extensible,
+ * allowing specific agent inputs to add their own properties.
  */
 export interface BaseAgentInput {
   projectId?: string
   userId?: string
   priority?: AgentPriority
   metadata?: Record<string, any>
+  [key: string]: any; // <-- FIX: Allows for extensible properties like 'prompt'
 }
 
 /**
