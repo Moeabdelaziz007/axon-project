@@ -1,11 +1,10 @@
 import { NextRequest } from 'next/server'
-import { runContentAgent } from '../../../../lib/agents/content-agent'
+import { runContentAgent } from '@/lib/agents/content-agent'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const result = await runContentAgent({
-      projectId: body?.projectId,
       prompt: String(body?.prompt || ''),
       tone: body?.tone,
       length: body?.length,
