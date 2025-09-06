@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  FOR_REVIEW
+  DONE
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  avatarUrl     String?   @map("avatar_url")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  teamId        String?   @map("team_id")
+  team          Team?     @relation(fields: [teamId], references: [id])
+  assignedTasks Task[]    @relation("AssigneeTasks")
+  progressEntries ProgressEntry[]
+  
+  @@map("users")
+}
+
+model Team {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  
+  members   User[]
+  project   Project?
+  
+  @@map("teams")
+}
+
+model Project {
+  id          String      @id @default(uuid())
+  name        String      @default("Axon Project")
+  teamId      String      @unique @map("team_id")
+  team        Team        @relation(fields: [teamId], references: [id])
+  createdAt   DateTime    @default(now()) @map("created_at")
+  
+  northStar   NorthStar?
+  goals       Goal[]
+  tasks       Task[]
+  milestones  Milestone[]
+  knowledge   Knowledge[]
+  
+  @@map("projects")
+}
+
+model NorthStar {
+  id          String   @id @default(uuid())
+  statement   String
+  metric      String?
+  projectId   String   @unique @map("project_id")
+  project     Project  @relation(fields: [projectId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("north_stars")
+}
+
+model Goal {
+  id          String   @id @default(uuid())
+  objective   String
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
+  isCurrent   Boolean  @default(true) @map("is_current")
+  projectId   String   @map("project_id")
+  project     Project  @relation(fields: [projectId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("goals")
+}
+
+model Task {
+  id           String      @id @default(uuid())
+  title        String
+  description  String?
+  status       TaskStatus  @default(TODO)
+  projectId    String      @map("project_id")
+  project      Project     @relation(fields: [projectId], references: [id])
+  assigneeId   String?     @map("assignee_id")
+  assignee     User?       @relation("AssigneeTasks", fields: [assigneeId], references: [id])
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  
+  history      ActivityLog[]
+  
+  @@map("tasks")
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  taskId    String   @map("task_id")
+  task      Task     @relation(fields: [taskId], references: [id])
+  change    String   // e.g., "status changed from TODO to IN_PROGRESS"
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("activity_logs")
+}
+
+model Milestone {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  achievedAt    DateTime? @map("achieved_at")
+  isAchieved    Boolean   @default(false) @map("is_achieved")
+  projectId     String   @map("project_id")
+  project       Project  @relation(fields: [projectId], references: [id])
+  
+  @@map("milestones")
+}
+
+model ProgressEntry {
+  id        String   @id @default(uuid())
+  content   String   // The "daily win" text
+  authorId  String   @map("author_id")
+  author    User     @relation(fields: [authorId], references: [id])
+  projectId String   @map("project_id")
+  project   Project  @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("progress_entries")
+}
+
+model Knowledge {
+  id        String   @id @default(uuid())
+  type      String   // "DOCUMENT", "FILE", "MEETING_NOTES"
+  title     String
+  content   String?  // For documents/notes
+  fileUrl   String?  @map("file_url") // For files in Supabase Storage
+  projectId String   @map("project_id")
+  project   Project  @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("knowledge")
+}
