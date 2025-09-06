@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+import { supabase } from '@/lib/supabaseClient'
 
 export const runtime = 'nodejs'
 
@@ -21,6 +22,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    // Save to Supabase
+    if (supabase) {
+      const { error } = await supabase
+        .from('artifacts')
+        .insert([{ 
+          run_id: runId,
+          agent_type: agentType,
+          output: output,
+          provider: provider,
+          metadata: metadata 
+        }])
+      if (error) {
+        console.error('Supabase error:', error)
+        // Don't block, just log the error
+      }
+    }
+
+    // Save locally as a fallback or for dev
     const baseDir = process.env.VERCEL || process.env.NODE_ENV === 'production'
       ? path.join('/tmp', 'artifacts')
       : path.join(process.cwd(), 'data', 'artifacts')
@@ -41,7 +60,11 @@ export async function POST(req: NextRequest) {
 
     await fs.writeFile(filePath, JSON.stringify(payload, null, 2), 'utf8')
 
-    return NextResponse.json({ ok: true, file: path.relative(process.cwd(), filePath) })
+    return NextResponse.json({ 
+      ok: true, 
+      file: path.relative(process.cwd(), filePath),
+      source: supabase ? 'Supabase & Local' : 'Local Only' 
+    })
   } catch (error: any) {
     return NextResponse.json(
       { ok: false, error: error?.message || 'Failed to save artifact' },

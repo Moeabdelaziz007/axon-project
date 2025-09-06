@@ -1,10 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+import { supabase } from '@/lib/supabaseClient'
 
 export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
+  // Prefer Supabase if available
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('artifacts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50)
+
+      if (error) {
+        throw error
+      }
+      return NextResponse.json({ ok: true, items: data, source: 'Supabase' })
+    } catch (error: any) {
+      return NextResponse.json({ ok: false, error: error?.message || 'Failed to list artifacts from Supabase' }, { status: 500 })
+    }
+  }
+
+  // Fallback to local filesystem
   try {
     const baseDir = process.env.VERCEL || process.env.NODE_ENV === 'production'
       ? path.join('/tmp', 'artifacts')
@@ -24,7 +44,7 @@ export async function GET(req: NextRequest) {
           return { file: `data/artifacts/${f}`, ...data }
         }),
     )
-    return NextResponse.json({ ok: true, items })
+    return NextResponse.json({ ok: true, items, source: 'Local' })
   } catch (error: any) {
     return NextResponse.json({ ok: false, error: error?.message || 'Failed to list artifacts' }, { status: 500 })
   }
