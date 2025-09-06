@@ -15,24 +15,30 @@ type SaveBody = {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as SaveBody
-    const { runId, agentType, output, provider, metadata } = body || {}
+    const body = await req.json()
+    const { runId, agentType, output, provider, ok, ...metadata } = body
 
-    if (!runId || !agentType || typeof output !== 'string') {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    // Basic validation
+    if (!runId || !agentType) {
+      return NextResponse.json(
+        { ok: false, error: 'Missing runId or agentType' },
+        { status: 400 },
+      )
     }
 
     // Save to Supabase
     if (supabase) {
       const { error } = await supabase
         .from('artifacts')
-        .insert([{ 
-          run_id: runId,
-          agent_type: agentType,
-          output: output,
-          provider: provider,
-          metadata: metadata 
-        }])
+        .insert([
+          {
+            run_id: runId,
+            agent_type: agentType,
+            output: output,
+            provider: provider,
+            metadata: metadata, // Store all extra fields in the metadata column
+          },
+        ])
       if (error) {
         console.error('Supabase error:', error)
         // Don't block, just log the error
@@ -53,9 +59,9 @@ export async function POST(req: NextRequest) {
       runId,
       agentType,
       output,
-      provider: provider || 'unknown',
-      metadata: metadata || {},
-      savedAt: new Date().toISOString(),
+      provider,
+      metadata, // Also save the full metadata to the local file
+      timestamp: new Date().toISOString(),
     }
 
     await fs.writeFile(filePath, JSON.stringify(payload, null, 2), 'utf8')

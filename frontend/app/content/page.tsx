@@ -46,16 +46,19 @@ export default function ContentAgentPage() {
       setRunId(data.runId)
       if (data?.result?.ok) {
         setOutput(data.result.output)
+
+        // Create a payload from the successful result
+        const artifactPayload = {
+          runId: data.runId,
+          agentType: 'content',
+          ...data.result, // Spread all properties from the successful result
+        };
+
         // Save artifact
         const save = await fetch('/api/artifacts/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            runId: data.runId,
-            agentType: 'content',
-            output: data.result.output,
-            provider: data.result.provider,
-          }),
+          body: JSON.stringify(artifactPayload),
         })
         const saveJson = await save.json()
         if (save.ok && saveJson?.ok) setSavedFile(saveJson.file)
