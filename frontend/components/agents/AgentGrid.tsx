@@ -1,72 +1,85 @@
 'use client';
 
-import { useState } from 'react';
 import { agentRegistry } from '@/lib/agentRegistry';
 import { runAgent } from '@/lib/bridge';
-import type { AgentResult, AgentStatus } from '@/lib/agents/types';
+import type { AgentResult, AgentType, BaseAgentInput } from '@/lib/agents/types';
 import { AgentCard } from './AgentCard';
+import useSWRMutation from 'swr/mutation';
 
-// Define a type for the state of all agents
-type AgentsState = {
-  [key: string]: {
-    status: AgentStatus;
-    result: AgentResult | null;
-  };
-};
+/**
+ * The mutation function that actually runs the agent via the bridge.
+ * This function is passed to useSWRMutation.
+ * @param {AgentType} agentType - The type of the agent to run.
+ * @param {{ arg: BaseAgentInput }} { arg: input } - The input for the agent.
+ * @returns {Promise<AgentResult>} The result of the agent execution.
+ */
+async function agentRunner(agentType: AgentType, { arg: input }: { arg: BaseAgentInput }): Promise<AgentResult> {
+  console.log(`[AgentGrid] Running agent ${agentType} with input:`, input);
+  const result = await runAgent({ agentType, input });
+  console.log(`[AgentGrid] Agent ${agentType} result:`, result);
+  return result;
+}
 
 /**
  * A smart component that manages the state and logic for the grid of AI agents.
- * It handles agent execution and passes down state to presentational AgentCard components.
+ * It handles agent execution using SWRMutation and passes down state to presentational AgentCard components.
  * @returns {JSX.Element} The rendered grid of agent cards.
  */
 export function AgentGrid() {
   const agents = Array.from(agentRegistry.values());
 
-  // A single state object to manage all agents
-  const [agentsState, setAgentsState] = useState<AgentsState>(
-    agents.reduce((acc, agent) => {
-      acc[agent.config.type] = { status: 'idle', result: null };
-      return acc;
-    }, {} as AgentsState)
-  );
+  // We need to manage a separate SWRMutation instance for each agent
+  // This map will store the SWRMutation hooks for each agentType
+  const agentMutations = new Map<AgentType, ReturnType<typeof useSWRMutation<AgentResult, Error, AgentType, BaseAgentInput>>>();
 
-  // Handler to run an agent, now located in the parent container
-  const handleRunAgent = async (agentType: keyof AgentsState) => {
-    // Update state for the specific agent to 'running'
-    setAgentsState(prevState => ({
-      ...prevState,
-      [agentType]: { status: 'running', result: null },
-    }));
-
-    const response = await runAgent({
-      agentType,
-      input: {
-        // This is a placeholder. In a real app, you'd get this from a form or modal.
-        prompt: `Execute a default task for the ${agentType} agent.`,
-      },
-    });
-
-    // Update state with the final result
-    setAgentsState(prevState => ({
-      ...prevState,
-      [agentType]: {
-        status: response.ok ? 'completed' : 'error',
-        result: response,
-      },
-    }));
-  };
+  agents.forEach(agentEntry => {
+    // Initialize useSWRMutation for each agent type
+    // The key for SWRMutation is the agentType itself
+    const { trigger, isMutating, data, error } = useSWRMutation<AgentResult, Error, AgentType, BaseAgentInput>(
+      agentEntry.config.type, // SWR key for this mutation
+      agentRunner, // The function that performs the mutation
+      { 
+        // Optional SWR configuration for this mutation
+        // For example, you might want to revalidate other data after a successful mutation
+        // onSuccess: (result, key, config) => { /* ... */ },
+      }
+    );
+    agentMutations.set(agentEntry.config.type, { trigger, isMutating, data, error });
+  });
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {agents.map(agentEntry => {
-        const agentState = agentsState[agentEntry.config.type];
+        const mutation = agentMutations.get(agentEntry.config.type);
+        if (!mutation) return null; // Should not happen
+
+        const { trigger, isMutating, data, error } = mutation;
+
+        // Determine the status based on SWRMutation state
+        let status: AgentResult['status'] = 'idle';
+        if (isMutating) {
+          status = 'running';
+        } else if (data) {
+          status = data.ok ? 'completed' : 'error';
+        } else if (error) {
+          status = 'error';
+        }
+
+        // The onRun handler now simply calls the SWRMutation trigger
+        const handleRunAgent = () => {
+          trigger({
+            // Placeholder input. In a real app, this would come from a form.
+            prompt: `Execute a default task for the ${agentEntry.config.name}.`,
+          });
+        };
+
         return (
           <AgentCard
             key={agentEntry.config.type}
             agent={agentEntry}
-            status={agentState.status}
-            result={agentState.result}
-            onRun={() => handleRunAgent(agentEntry.config.type)}
+            status={status}
+            result={data || null} // Pass the SWR data as result
+            onRun={handleRunAgent}
           />
         );
       })}
