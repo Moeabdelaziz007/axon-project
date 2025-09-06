@@ -28,11 +28,27 @@ module.exports = {
       animation: {
         'confetti': 'confetti 1.8s linear forwards',
         'bounce-slow': 'bounce 2s infinite',
+        'fade-in': 'fadeIn 700ms ease-out both',
+        'slide-up': 'slideUp 700ms ease-out both',
+        'glow': 'glow 1500ms ease-in-out infinite',
       },
       keyframes: {
         confetti: {
           '0%': { transform: 'translateY(-50vh) rotate(0deg)', opacity: '1' },
           '100%': { transform: 'translateY(100vh) rotate(720deg)', opacity: '0' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 0 0 rgba(99,102,241,0.4)' },
+          '50%': { boxShadow: '0 0 0 8px rgba(99,102,241,0.1)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(99,102,241,0.0)' },
         },
       },
     },
