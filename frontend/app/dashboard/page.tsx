@@ -1,11 +1,10 @@
-import { DashboardLayout } from '@/components/dashboard/layout';
+import { DashboardLayout } from '@/components/templates/DashboardLayout';
 
 /**
  * Main Dashboard Page
  *
  * This is the primary entry point for the Axon dashboard.
- * It composes the main layout and will eventually hold the state
- * and logic for agent interactions.
+ * It composes the main layout template.
  */
 export default function DashboardPage() {
   return (

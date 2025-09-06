@@ -3,17 +3,18 @@
 import { useState } from 'react';
 import { AgentRegistryEntry, AgentResult, AgentStatus } from '@/lib/agents/types';
 import { runAgent } from '@/lib/bridge';
-import { Bot, Play, Loader2, CheckCircle, XCircle, Terminal } from 'lucide-react';
+import { Bot, Play, Loader2, CheckCircle, XCircle } from 'lucide-react';
 
 interface AgentCardProps {
   agent: AgentRegistryEntry;
 }
 
 /**
- * AgentCard Component
+ * AgentCard Component (Organism)
  *
  * A smart, stateful component that represents a single AI agent on the dashboard.
- * It allows users to run the agent, view its status, and see the results.
+ * It is a self-contained unit that allows users to run an agent, view its status,
+ * and see the results.
  */
 export function AgentCard({ agent }: AgentCardProps) {
   const [status, setStatus] = useState<AgentStatus>('idle');

@@ -1,14 +1,20 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { useTheme } from 'next-themes'
+import * as React from 'react';
+import { useTheme } from 'next-themes';
 
+/**
+ * ThemeToggle Component (Molecule)
+ *
+ * A simple component that combines an icon and a button to allow users
+ * to switch between light and dark themes.
+ */
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
-  }
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
     <button
@@ -22,5 +28,5 @@ export function ThemeToggle() {
       </span>
       <span className="hidden sm:inline font-medium">Theme</span>
     </button>
-  )
+  );
 }

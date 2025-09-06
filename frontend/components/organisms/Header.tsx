@@ -1,13 +1,13 @@
 'use client';
 
 import { Search, Bell } from 'lucide-react';
-import { ThemeToggle } from '../theme-toggle';
+import { ThemeToggle } from '@/components/molecules/ThemeToggle';
 
 /**
- * Header Component
+ * Header Component (Organism)
  *
- * Sits at the top of the main content area. Provides search functionality,
- * notifications, and user-related actions.
+ * Sits at the top of the main content area. It is a self-contained unit
+ * that provides search, notifications, and theme-switching functionality.
  */
 export function Header() {
   return (

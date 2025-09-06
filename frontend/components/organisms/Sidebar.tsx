@@ -3,11 +3,10 @@
 import { Home, Bot, Settings, LifeBuoy } from 'lucide-react';
 
 /**
- * Sidebar Component
+ * Sidebar Component (Organism)
  *
- * Provides primary navigation for the dashboard. It's a client component
- * to allow for future interactivity, such as collapse/expand functionality
- * or active link highlighting.
+ * Provides primary navigation for the dashboard. It is a self-contained unit
+ * with its own structure and navigation logic.
  */
 export function Sidebar() {
   // Placeholder for navigation items
