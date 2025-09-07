@@ -60,7 +60,14 @@ export function AgentCard({ agent, status, result, onRun }: AgentCardProps) {
         {status === 'running' && <p className="text-sm text-slate-500 dark:text-slate-400">Awaiting results...</p>}
         {result && (
           <div className="text-xs bg-slate-100 dark:bg-slate-800/50 p-2 rounded-md overflow-auto max-h-28">
-            <pre className="whitespace-pre-wrap break-words"><code>{result.ok ? result.output.substring(0, 200) + '...' : result.error}</code></pre>
+            <pre className="whitespace-pre-wrap break-words">
+              <code>
+                {result.ok
+                  ? (result.output?.substring(0, 200) + '...' || 'No output')
+                  : (result as any).error || 'Unknown error'
+                }
+              </code>
+            </pre>
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 // Main components
-export { default as AgentCard } from './AgentCard';
-export { default as AgentGrid } from './AgentGrid';
+export { AgentCard } from './AgentCard';
+export { AgentGrid } from './AgentGrid';
 export { AgentOutput } from './AgentOutput';
 
 // Sub-components
