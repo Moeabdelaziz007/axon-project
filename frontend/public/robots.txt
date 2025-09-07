@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Axon AI Agent Hub
+# Sitemap: https://axon-project.vercel.app/sitemap.xml
